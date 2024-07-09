@@ -1,0 +1,202 @@
+FRONT END [ REACT NATIVE WITH TYPE SCRIPT]
+
+/ PROJECT SETUP
+
+npx create-expo-app JournalApp --template expo-template-blank-typescript
+
+Using react-native-cli
+npx react-native init JournalApp --template react-native-template-typescript
+cd JournalApp
+
+/ SIGN UP SCREEN
+
+// src/screens/SignUpScreen.tsx
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
+
+const SignUpScreen = ({ navigation }) => {
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
+
+const handleSignUp = () => {
+// TODO: Add sign-up logic here
+};
+
+return (
+
+
+
+
+
+);
+};
+
+const styles = StyleSheet.create({
+container: {
+flex: 1,
+justifyContent: 'center',
+padding: 16,
+},
+input: {
+height: 40,
+borderColor: 'gray',
+borderWidth: 1,
+marginBottom: 12,
+paddingHorizontal: 8,
+},
+});
+
+export default SignUpScreen;
+
+/ LOGIN SCREEN
+
+// src/screens/LoginScreen.tsx
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet } from 'react-native';
+
+const LoginScreen = ({ navigation }) => {
+const [username, setUsername] = useState('');
+const [password, setPassword] = useState('');
+
+const handleLogin = () => {
+// TODO: Add login logic here
+};
+
+return (
+
+
+
+
+
+);
+};
+const styles = StyleSheet.create({
+container: {
+flex: 1,
+justifyContent: 'center',
+padding: 16,
+},
+input: {
+height: 40,
+borderColor: 'gray',
+borderWidth: 1,
+marginBottom: 12,
+paddingHorizontal: 8,
+},
+});
+
+export default LoginScreen;
+
+/ JOURNAL ENTRY MANAGEMENT
+
+// src/screens/JournalEntryScreen.tsx
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet, Picker } from 'react-native';
+
+const JournalEntryScreen = ({ navigation }) => {
+const [title, setTitle] = useState('');
+const [content, setContent] = useState('');
+const [category, setCategory] = useState('');
+const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+const handleSave = () => {
+// TODO: Add save logic here
+};
+
+return (
+
+
+<TextInput
+placeholder="Content"
+value={content}
+onChangeText={setContent}
+multiline
+style={[styles.input, { height: 100 }]}
+/>
+<Picker
+selectedValue={category}
+onValueChange={(itemValue) => setCategory(itemValue)}
+style={styles.input}
+>
+<Picker.Item label="Personal" value="personal" />
+<Picker.Item label="Work" value="work" />
+<Picker.Item label="Travel" value="travel" />
+
+
+
+
+);
+};
+const styles = StyleSheet.create({
+container: {
+flex: 1,
+justifyContent: 'center',
+padding: 16,
+},
+input: {
+height: 40,
+borderColor: 'gray',
+borderWidth: 1,
+marginBottom: 12,
+paddingHorizontal: 8,
+},
+});
+
+export default JournalEntryScreen;
+
+/ JOURNAL VIEW
+
+// src/screens/JournalEntryScreen.tsx
+import React, { useState } from 'react';
+import { View, TextInput, Button, StyleSheet, Picker } from 'react-native';
+
+const JournalEntryScreen = ({ navigation }) => {
+const [title, setTitle] = useState('');
+const [content, setContent] = useState('');
+const [category, setCategory] = useState('');
+const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+
+const handleSave = () => {
+// TODO: Add save logic here
+};
+
+return (
+
+
+<TextInput
+placeholder="Content"
+value={content}
+onChangeText={setContent}
+multiline
+style={[styles.input, { height: 100 }]}
+/>
+<Picker
+selectedValue={category}
+onValueChange={(itemValue) => setCategory(itemValue)}
+style={styles.input}
+>
+<Picker.Item label="Personal" value="personal" />
+<Picker.Item label="Work" value="work" />
+<Picker.Item label="Travel" value="travel" />
+
+
+
+
+);
+};
+const styles = StyleSheet.create({
+container: {
+flex: 1,
+justifyContent: 'center',
+padding: 16,
+},
+input: {
+height: 40,
+borderColor: 'gray',
+borderWidth: 1,
+marginBottom: 12,
+paddingHorizontal: 8,
+},
+});
+
+export default JournalEntryScreen;
