@@ -1,0 +1,114 @@
+Instructions to Set Up and Run the Backend Service
+Prerequisites
+Node.js (>=12.x)
+npm (>=6.x)
+PostgreSQL or MySQL installed and running
+TypeScript installed globally (optional): npm install -g typescript
+Steps to Set Up and Run the Backend Service
+Clone the Repository
+
+git clone <repository-url>
+cd journal-backend
+Install Dependencies
+
+npm install
+Configure the Database
+
+Create a new database in PostgreSQL or MySQL.
+
+Update the ormconfig.json file with your database configuration.
+
+Example ormconfig.json for PostgreSQL:
+
+{
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "your-username",
+  "password": "your-password",
+  "database": "journal_app",
+  "synchronize": true,
+  "logging": false,
+  "entities": [
+    "src/entity/**/*.ts"
+  ],
+  "migrations": [
+    "src/migration/**/*.ts"
+  ],
+  "subscribers": [
+    "src/subscriber/**/*.ts"
+  ]
+}
+Set Up Environment Variables
+
+Create a .env file in the root directory.
+
+Add the following environment variables:
+
+JWT_SECRET=your-secret-key
+Run Database Migrations (Optional)
+
+If you have migrations set up, run them using TypeORM CLI:
+npm run typeorm migration:run
+Start the Development Server
+
+npm run dev
+This command will start the server using ts-node-dev for hot-reloading during development.
+
+Project Structure
+The project structure should look like this:
+
+journal-backend/
+├── src/
+│   ├── controllers/
+│   │   └── UserController.ts
+│   ├── entity/
+│   │   └── User.ts
+│   ├── middlewares/
+│   │   └── authMiddleware.ts
+│   ├── routes/
+│   │   └── userRoutes.ts
+│   ├── index.ts
+│   ├── ormconfig.json
+│   └── .env
+├── package.json
+├── tsconfig.json
+└── ...
+Example .env File
+JWT_SECRET=my-super-secret-key
+Running the Application
+Starting the Server
+
+npm run dev
+This will start the server on http://localhost:3000.
+
+Testing the API Endpoints
+
+Use a tool like Postman or cURL to test the endpoints.
+Register a new user:
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpassword",
+  "email": "testuser@example.com"
+}
+Login with the new user:
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "testpassword"
+}
+Get user profile (use the token from the login response):
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer <token>
+Notes
+Ensure your database is running and accessible.
+If using PostgreSQL, you might need to install pg and pg-hstore npm packages:
+npm install pg pg-hstore
+If using MySQL, install mysql2 package:
+npm install mysql2
+By following these steps, you should be able to set up and run the backend service for the journal application.
