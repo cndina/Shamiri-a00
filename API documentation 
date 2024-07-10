@@ -1,0 +1,273 @@
+Here is the API documentation for the backend service, detailing the endpoints and their usage.
+
+User Management Endpoints
+
+User Registration*
+
+Endpoint: /api/users/register
+Method: POST
+Description: Registers a new user.
+Request Body:
+{
+  "username": "string",
+  "password": "string",
+  "email": "string"
+}
+Response:
+{
+  "message": "User created successfully"
+}
+User Login
+
+Endpoint: /api/users/login
+Method: POST
+Description: Authenticates a user and returns a JWT token.
+Request Body:
+{
+  "username": "string",
+  "password": "string"
+}
+Response:
+{
+  "token": "string"
+}
+Get User Profile
+
+Endpoint: /api/users/profile
+Method: GET
+Description: Returns the profile of the authenticated user.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Response:
+{
+  "id": "number",
+  "username": "string",
+  "email": "string"
+}
+Journal Entry Management Endpoints
+Create Journal Entry
+
+Endpoint: /api/journal
+Method: POST
+Description: Creates a new journal entry.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Request Body:
+{
+  "title": "string",
+  "content": "string",
+  "category": "string",
+  "date": "string (YYYY-MM-DD)"
+}
+Response:
+{
+  "message": "Journal entry created successfully"
+}
+Get All Journal Entries
+
+Endpoint: /api/journal
+Method: GET
+Description: Returns all journal entries for the authenticated user.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Response:
+[
+  {
+    "id": "number",
+    "title": "string",
+    "content": "string",
+    "category": "string",
+    "date": "string (YYYY-MM-DD)"
+  },
+  ...
+]
+Get Single Journal Entry
+
+Endpoint: /api/journal/:id
+Method: GET
+Description: Returns a single journal entry by its ID.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Response:
+{
+  "id": "number",
+  "title": "string",
+  "content": "string",
+  "category": "string",
+  "date": "string (YYYY-MM-DD)"
+}
+Update Journal Entry
+
+Endpoint: /api/journal/:id
+Method: PUT
+Description: Updates a journal entry by its ID.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Request Body:
+{
+  "title": "string",
+  "content": "string",
+  "category": "string",
+  "date": "string (YYYY-MM-DD)"
+}
+Response:
+{
+  "message": "Journal entry updated successfully"
+}
+Delete Journal Entry
+
+Endpoint: /api/journal/:id
+Method: DELETE
+Description: Deletes a journal entry by its ID.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Response:
+{
+  "message": "Journal entry deleted successfully"
+}
+Data Summary Endpoints
+Get Summary Data
+
+Endpoint: /api/summary
+Method: GET
+Description: Returns a summary of journal entries over a specified period.
+Headers:
+{
+  "Authorization": "Bearer <token>"
+}
+Query Parameters:
+{
+  "period": "string (daily|weekly|monthly)"
+}
+Response:
+{
+  "period": "string",
+  "count": "number",
+  "entries": [
+    {
+      "id": "number",
+      "title": "string",
+      "category": "string",
+      "date": "string (YYYY-MM-DD)"
+    },
+    ...
+  ]
+}
+Example Implementation for User Registration Endpoint
+User Registration Controller
+
+// src/controllers/UserController.ts
+import { Request, Response } from 'express';
+import { User } from '../entity/User';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+
+export class UserController {
+  static async register(req: Request, res: Response) {
+    const { username, password, email } = req.body;
+
+    const user = new User();
+    user.username = username;
+    user.password = bcrypt.hashSync(password, 8);
+    user.email = email;
+
+    await user.save();
+
+    res.status(201).send({ message: 'User created successfully' });
+  }
+
+  static async login(req: Request, res: Response) {
+    const { username, password } = req.body;
+
+    const user = await User.findOne({ where: { username } });
+
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+      return res.status(401).send({ message: 'Invalid credentials' });
+    }
+
+    const token = jwt.sign({ userId: user.id }, 'secret', { expiresIn: '1h' });
+
+    res.send({ token });
+  }
+
+  static async profile(req: Request, res: Response) {
+    const userId = req.userId;
+
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    res.send({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+    });
+  }
+}
+User Routes
+
+// src/routes/userRoutes.ts
+import { Router } from 'express';
+import { UserController } from '../controllers/UserController';
+import { authMiddleware } from '../middlewares/authMiddleware';
+
+const router = Router();
+
+router.post('/register', UserController.register);
+router.post('/login', UserController.login);
+router.get('/profile', authMiddleware, UserController.profile);
+
+export default router;
+Auth Middleware
+
+// src/middlewares/authMiddleware.ts
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+  if (!token) {
+    return res.status(401).send({ message: 'Access denied' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'secret');
+    req.userId = (decoded as any).userId;
+    next();
+  } catch (err) {
+    res.status(400).send({ message: 'Invalid token' });
+  }
+};
+Main Application Setup
+
+// src/index.ts
+import 'reflect-metadata';
+import express from 'express';
+import { createConnection } from 'typeorm';
+import userRoutes from './routes/userRoutes';
+
+const app = express();
+app.use(express.json());
+app.use('/api/users', userRoutes);
+
+createConnection().then(() => {
+  app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+  });
+}).catch(error => console.log(error));
+This setup provides a good starting point for the backend with user management and JWT-based authentication. You can extend this by adding the remaining endpoints for journal entry management and data summary using a similar pattern.
