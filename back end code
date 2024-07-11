@@ -1,14 +1,11 @@
-/ Back end Node.js/ Express with typescript
 
-/ PROJECT SETUP
+
 
 mkdir journal-backend
 cd journal-backend
 npm init -y
 npm install express typescript ts-node-dev @types/express pg typeorm reflect-metadata class-validator
-npx tsc --init
-
-/TYPESCRIPT CONFIGURATION
+npx 
 
 {
 "compilerOptions": {
@@ -23,7 +20,6 @@ npx tsc --init
 }
 }
 
-/ EXPRESS SERVER SETUP
 
 // src/index.ts
 import 'reflect-metadata';
