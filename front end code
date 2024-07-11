@@ -3,8 +3,6 @@ FRONT END [ REACT NATIVE WITH TYPE SCRIPT]
 / PROJECT SETUP
 
 npx create-expo-app JournalApp --template expo-template-blank-typescript
-
-Using react-native-cli
 npx react-native init JournalApp --template react-native-template-typescript
 cd JournalApp
 
